@@ -1,8 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { useRestaurantStatus } from '@/contexts/RestaurantStatusContext';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import heroImage from '@/assets/hero-thali.jpg';
 
 const Hero = () => {
+  const { isOpen } = useRestaurantStatus();
+
   return (
     <section className="relative min-h-[600px] flex items-center overflow-hidden">
       {/* Background with gradient overlay */}
@@ -30,20 +34,27 @@ const Hero = () => {
             Experience the authentic flavors of India with our carefully crafted vegetarian dishes. 
             Fresh ingredients, traditional recipes, and aromatic spices in every bite.
           </p>
-          
-          {/* Hours */}
-          <div className="mb-8 p-4 bg-card/80 backdrop-blur-sm rounded-lg shadow-soft inline-block">
-            <p className="font-semibold text-primary mb-1">🕒 Hours of Operation</p>
-            <p className="text-muted-foreground">Monday - Sunday: 11:00 AM - 10:00 PM</p>
-          </div>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link to="/menu">
-              <Button variant="hero" size="lg" className="w-full sm:w-auto">
-                Order Now
-              </Button>
-            </Link>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Link to="/menu">
+                      <Button variant="hero" size="lg" className="w-full sm:w-auto" disabled={!isOpen}>
+                        Order Now
+                      </Button>
+                    </Link>
+                  </div>
+                </TooltipTrigger>
+                {!isOpen && (
+                  <TooltipContent>
+                    <p>We're currently closed. Please check back later.</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
             <Link to="/menu">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 View Menu

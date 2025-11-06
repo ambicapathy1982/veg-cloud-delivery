@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Leaf, Flame } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { useRestaurantStatus } from '@/contexts/RestaurantStatusContext';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 
 // Import images
@@ -29,6 +31,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ item }: ProductCardProps) => {
   const { addToCart } = useCart();
+  const { isOpen } = useRestaurantStatus();
 
   const handleAddToCart = () => {
     addToCart(item);
@@ -84,13 +87,27 @@ const ProductCard = ({ item }: ProductCardProps) => {
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
-        <Button 
-          onClick={handleAddToCart}
-          variant="default" 
-          className="w-full"
-        >
-          Add to Cart
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="w-full">
+                <Button 
+                  onClick={handleAddToCart}
+                  variant="default" 
+                  className="w-full"
+                  disabled={!isOpen}
+                >
+                  Add to Cart
+                </Button>
+              </div>
+            </TooltipTrigger>
+            {!isOpen && (
+              <TooltipContent>
+                <p>We're currently closed. Please check back later.</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       </CardFooter>
     </Card>
   );
